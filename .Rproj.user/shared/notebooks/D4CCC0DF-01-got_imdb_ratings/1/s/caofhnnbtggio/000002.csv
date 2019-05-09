@@ -1,0 +1,4 @@
+"0",""
+"0","ggplot(got_ratings, aes(x = `Episode Number`, y = `Imdb Rating`)) +"
+"0","                    geom_point()"
+"0",""
