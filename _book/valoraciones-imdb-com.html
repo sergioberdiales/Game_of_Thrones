@@ -147,11 +147,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="valoraciones-imdb.com" class="section level1">
 <h1><span class="header-section-number">1</span> Valoraciones imdb.com</h1>
 <p>En esta parte vamos a echar un vistazo a las valoraciones de los capítulos de Juego de Tronos de los usuarios de imdb.com.</p>
-<p>Las valoraciones de los tres primeros capítulos de la temporada 8 (8,3, 8,6 y 8,3) ya estaban por debajo del promedio histórico de la serie, pero es que la valoración del cuarto episodio ahora mismo es de 6,7 (con más de 60.000 valoraciones), un auténtico batacazo para este serie y para HBO.</p>
-<p>Inicialmente lo que vamos a hacer es simplemente visualizar en un gráfico lo lejos que está la puntuación de este caítulo del resto de episodios de Juego de Tronos.</p>
-<p>Cargamos primero los paquetes necesarios para el análisis. Opto esta vez por cargar directamente la librería tidyverse y su universo de paquetes.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tidyverse)</code></pre>
-<p>Los datos los he descargado de este [proyecto de Kaggle] (<a href="https://www.kaggle.com/dasbootstrapping/game-of-thrones-episode-data#got_csv.csv" class="uri">https://www.kaggle.com/dasbootstrapping/game-of-thrones-episode-data#got_csv.csv</a>). Muchas gracias, <a href="https://www.kaggle.com/dasbootstrapping">dasbootstrapping</a> por publicar este dataset.</p>
+<p>Las valoraciones de los tres primeros capítulos de la temporada 8 (8,3, 8,6 y 8,3) ya estaban por debajo del promedio histórico de la serie, pero es que la valoración del cuarto episodio ahora mismo es de 6,6 (con más de 60.000 valoraciones), un auténtico batacazo para este serie y para HBO.</p>
+<p>Inicialmente lo que vamos a hacer es simplemente visualizar en distintos gráficos lo lejos que está la puntuación de este capítulo del resto de episodios de Juego de Tronos.</p>
+<p>Cargamos primero los paquetes necesarios para el análisis. Opto esta vez por cargar directamente la librería tidyverse y su universo de paquetes. Y añado la librería “gridExtra”.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tidyverse)
+<span class="kw">library</span>(gridExtra)</code></pre>
+<p>Los datos los he descargado de este <a href="https://www.kaggle.com/dasbootstrapping/game-of-thrones-episode-data#got_csv.csv">proyecto de Kaggle</a>. Muchas gracias, <a href="https://www.kaggle.com/dasbootstrapping">dasbootstrapping</a> por publicar este dataset.</p>
 <p>Lo único que he hecho ha sido revisar los valores de los promedios que estaban ya en la tabla (algunos promedios han cambiado mínimamente) e incluir las valoraciones de los 4 primeros capítulos de la temporada 8 con sus correspondientes valoraciones. La fecha de obtención de estos datos de imdb.com es el 2019-05-09.</p>
 <p>Importamos la tabla:</p>
 <pre class="sourceCode r"><code class="sourceCode r">original_dataset &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span class="st">&#39;data/got_csv_ratings_updated_2019-05-09.csv&#39;</span>, <span class="dt">locale =</span> <span class="kw">locale</span>(<span class="dt">encoding =</span> <span class="st">&quot;ISO-8859-1&quot;</span>))</code></pre>
@@ -160,17 +161,55 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
                                            <span class="st">&quot;Episode Number&quot;</span>,
                                            <span class="st">&quot;Episode Name&quot;</span>,
                                            <span class="st">&quot;Imdb Rating&quot;</span>)</code></pre>
+<p>Obtenemos un resumen con varios estadísticos con la función “summary”. El 75% de los episodios tienen una valoración promedio por encima del 8,8. Casi nada. Y un 25% obtuvieron una valoración mayor que 9,4.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(got_ratings<span class="op">$</span><span class="st">`</span><span class="dt">Imdb Rating</span><span class="st">`</span>)</code></pre>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s 
+##   6.600   8.800   9.000   9.046   9.400   9.900       2</code></pre>
 <p>Echamos un vistazo a la distribución de las valoraciones con un histograma.</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggplot</span>(got_ratings, <span class="kw">aes</span>(<span class="dt">x =</span> <span class="st">`</span><span class="dt">Imdb Rating</span><span class="st">`</span>)) <span class="op">+</span>
-<span class="st">                    </span><span class="kw">geom_histogram</span>()</code></pre>
-<p><img src="_main_files/figure-html/unnamed-chunk-4-1.png" width="\textwidth" />
-El “hueco” entre la valoración más baja que existía hasta ahora y la del episodio 8x04 es tremendo, 1,3 puntos.</p>
+<span class="st">                    </span><span class="kw">geom_histogram</span>(<span class="dt">binwidth =</span> <span class="fl">0.25</span>) <span class="op">+</span><span class="st"> </span>
+<span class="st">                          </span><span class="kw">stat_bin</span>(<span class="dt">binwidth=</span> <span class="fl">0.25</span>, <span class="dt">geom=</span><span class="st">&quot;text&quot;</span>, <span class="kw">aes</span>(<span class="dt">label=</span>..count..), <span class="dt">vjust =</span> <span class="fl">-0.5</span>)</code></pre>
+<p><img src="_main_files/figure-html/unnamed-chunk-5-1.png" width="\textwidth" />
+El “hueco” entre la valoración más baja que existía hasta ahora y la del episodio 8x04 “The Last of the Starks” es tremendo, 1,4 puntos.</p>
 <p>Lo vemos también con todas las valoraciones representadas en un nube de puntos.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggplot</span>(got_ratings, <span class="kw">aes</span>(<span class="dt">x =</span> <span class="st">`</span><span class="dt">Episode Number</span><span class="st">`</span>, <span class="dt">y =</span> <span class="st">`</span><span class="dt">Imdb Rating</span><span class="st">`</span>)) <span class="op">+</span>
-<span class="st">                    </span><span class="kw">geom_point</span>()</code></pre>
-<p><img src="_main_files/figure-html/unnamed-chunk-5-1.png" width="\textwidth" /></p>
-<p>No hay precedente, ni punto cercano, a la la valoración de este episodio. Lo que está por determinar es si los dos últimos capítulos seguirán en esta línea o recuperarán, por lo menos en parte, el favor del público.</p>
-<p>Un detalle de la evolución de las valoraciones que se observa a simple vista en este último gráfico es la creciente variabilidad en las valoraciones. Sigue habiendo capítulos muy bien valorados (no en la presente temporada), incluso mejor valorados que cualquier episodio de las primeras temporadas, pero también aparecen cada vez más capítulos en el entorno del 8,5, a partir del cual ya podríamos decir que es un episodio “flojito” de esta serie.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggplot</span>(got_ratings, <span class="kw">aes</span>(<span class="dt">x =</span> <span class="st">`</span><span class="dt">Episode Number</span><span class="st">`</span>, <span class="dt">y =</span> <span class="st">`</span><span class="dt">Imdb Rating</span><span class="st">`</span>, <span class="dt">color =</span> <span class="kw">as.factor</span>(Season))) <span class="op">+</span>
+<span class="st">                    </span><span class="kw">geom_point</span>() <span class="op">+</span>
+<span class="st">                    </span><span class="kw">labs</span>(<span class="dt">colour =</span> <span class="st">&quot;Temporadas&quot;</span>,
+                         <span class="dt">x =</span> <span class="st">&quot;Número de episodio&quot;</span>, 
+                         <span class="dt">y =</span> <span class="st">&quot;Valoración IMDb&quot;</span>, 
+                         <span class="dt">title =</span> <span class="st">&quot;Juego de Tronos - Valoraciones IMDb por episodio&quot;</span>) <span class="op">+</span>
+<span class="st">                   </span><span class="kw">geom_text</span>(<span class="kw">aes</span>(<span class="dt">label=</span><span class="kw">ifelse</span>(<span class="st">`</span><span class="dt">Imdb Rating</span><span class="st">`</span> <span class="op">&lt;</span><span class="st"> </span><span class="dv">7</span>,<span class="st">`</span><span class="dt">Episode Name</span><span class="st">`</span>,<span class="st">&#39;&#39;</span>)),<span class="dt">hjust=</span> <span class="fl">0.8</span>,<span class="dt">vjust=</span> <span class="dv">-2</span>)</code></pre>
+<p><img src="_main_files/figure-html/unnamed-chunk-6-1.png" width="\textwidth" /></p>
+<p>No hay precedente, ni punto cercano, a la la valoración de este episodio. Lo que está por determinar es si los dos últimos capítulos seguirán en esta línea o recuperarán, por lo menos en parte, el favor del público. Pero es que 3 de los 4 capítulos peor valorados de toda la serie pertenecen a esta temporada. No pinta bien la cosa.</p>
+<p>Otro detalle de la evolución de las valoraciones que se observa también a simple vista en este último gráfico es la creciente variabilidad en las valoraciones. En las últimas temporadas, excepto en ésta, sigue habiendo capítulos muy bien valorados , incluso mejor valorados que cualquier episodio de las primeras temporadas, pero también aparecen cada vez más capítulos en el entorno del 8,5, a partir del cual ya podríamos decir que es un episodio “flojito” de esta serie.</p>
+<p>Lo vemos más claro si dividimos los datos y hacemos 2 histogramas, uno para las primeras 4 temporadas y otro para las restantes.</p>
+<pre class="sourceCode r"><code class="sourceCode r">got_ratings_<span class="dv">1</span>_<span class="dv">4</span> &lt;-<span class="st"> </span>got_ratings <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">                   </span><span class="kw">filter</span>(Season <span class="op">&lt;</span><span class="st"> </span><span class="dv">5</span>)
+
+got_ratings_<span class="dv">5</span>_<span class="dv">8</span> &lt;-<span class="st"> </span>got_ratings <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">                   </span><span class="kw">filter</span>(Season <span class="op">&gt;</span><span class="st"> </span><span class="dv">4</span>)
+
+
+
+graph_<span class="dv">1</span> &lt;-<span class="st"> </span><span class="kw">ggplot</span>(got_ratings_<span class="dv">1</span>_<span class="dv">4</span>, <span class="kw">aes</span>(<span class="dt">x =</span> <span class="st">`</span><span class="dt">Imdb Rating</span><span class="st">`</span>)) <span class="op">+</span>
+<span class="st">                    </span><span class="kw">geom_histogram</span>(<span class="dt">binwidth =</span> <span class="fl">0.25</span>) <span class="op">+</span><span class="st"> </span>
+<span class="st">                                     </span><span class="kw">stat_bin</span>(<span class="dt">binwidth=</span> <span class="fl">0.25</span>, <span class="dt">geom=</span><span class="st">&quot;text&quot;</span>, <span class="kw">aes</span>(<span class="dt">label=</span>..count..), <span class="dt">vjust =</span> <span class="fl">-0.5</span>) <span class="op">+</span>
+<span class="st">                                      </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="kw">c</span>(<span class="fl">6.5</span>, <span class="fl">10.0</span>), <span class="dt">ylim =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">20</span>)) <span class="op">+</span>
+<span class="st">                                      </span><span class="kw">labs</span>(<span class="dt">title =</span> <span class="st">&quot;Distribución promedios temporadas 1-4&quot;</span>)
+
+
+graph_<span class="dv">2</span> &lt;-<span class="st"> </span><span class="kw">ggplot</span>(got_ratings_<span class="dv">5</span>_<span class="dv">8</span>, <span class="kw">aes</span>(<span class="dt">x =</span> <span class="st">`</span><span class="dt">Imdb Rating</span><span class="st">`</span>)) <span class="op">+</span>
+<span class="st">                    </span><span class="kw">geom_histogram</span>(<span class="dt">binwidth =</span> <span class="fl">0.25</span>,
+                                   <span class="dt">xlim =</span> <span class="kw">c</span>(<span class="fl">6.5</span>, <span class="fl">10.0</span>)) <span class="op">+</span><span class="st"> </span>
+<span class="st">                                     </span><span class="kw">stat_bin</span>(<span class="dt">binwidth=</span> <span class="fl">0.25</span>, <span class="dt">geom=</span><span class="st">&quot;text&quot;</span>, <span class="kw">aes</span>(<span class="dt">label=</span>..count..), <span class="dt">vjust =</span> <span class="fl">-0.5</span>) <span class="op">+</span>
+<span class="st">                                      </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="kw">c</span>(<span class="fl">6.5</span>, <span class="fl">10.0</span>), <span class="dt">ylim =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">10</span>)) <span class="op">+</span>
+<span class="st">                                      </span><span class="kw">labs</span>(<span class="dt">title =</span> <span class="st">&quot;Distribución promedios temporadas 5-8&quot;</span>)
+
+<span class="kw">grid.arrange</span>(graph_<span class="dv">1</span>, 
+             graph_<span class="dv">2</span>, 
+             <span class="dt">ncol =</span> <span class="dv">1</span>) </code></pre>
+<p><img src="_main_files/figure-html/unnamed-chunk-7-1.png" width="\textwidth" /></p>
+<p>En el segundo histograma es bastante clara la mayor dispersión de los promedios, así como el descenso de las notas más frecuentes, que en el primero se encuentran muy cerca de los nueves mientras en el segundo se produce un claro desplazamiento hacia la izquierda.</p>
 
 </div>
             </section>

@@ -1,4 +1,0 @@
-"0",""
-"0","ggplot(got_ratings, aes(x = `Imdb Rating`)) +"
-"0","                    geom_histogram()"
-"0",""

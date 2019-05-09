@@ -2,17 +2,18 @@
 
 En esta parte vamos a echar un vistazo a las valoraciones de los capítulos de Juego de Tronos de los usuarios de imdb.com. 
 
-Las valoraciones de los tres primeros capítulos de la temporada 8 (8,3, 8,6 y 8,3)  ya estaban por debajo del promedio histórico de la serie,  pero es que la valoración del cuarto episodio ahora mismo es de 6,7 (con más de 60.000 valoraciones), un auténtico batacazo para este serie y para HBO. 
+Las valoraciones de los tres primeros capítulos de la temporada 8 (8,3, 8,6 y 8,3)  ya estaban por debajo del promedio histórico de la serie,  pero es que la valoración del cuarto episodio ahora mismo es de 6,6 (con más de 60.000 valoraciones), un auténtico batacazo para esta serie y para HBO. 
 
-Inicialmente lo que vamos a hacer es simplemente visualizar en un gráfico lo lejos que está la puntuación de este caítulo del resto de episodios de Juego de Tronos.
+Inicialmente lo que vamos a hacer es simplemente visualizar en distintos gráficos lo lejos que está la puntuación de este capítulo del resto de episodios de Juego de Tronos.
 
-Cargamos primero los paquetes necesarios para el análisis. Opto esta vez por cargar directamente la librería tidyverse y su universo de paquetes.
+Cargamos primero los paquetes necesarios para el análisis. Opto esta vez por cargar directamente la librería tidyverse y su universo de paquetes. Y añado la librería "gridExtra". 
 ```{r , warning= FALSE, message= FALSE}
 library(tidyverse)
+library(gridExtra)
 ```
 
 
-Los datos los he descargado de este [proyecto de Kaggle] (https://www.kaggle.com/dasbootstrapping/game-of-thrones-episode-data#got_csv.csv). Muchas gracias, [dasbootstrapping](https://www.kaggle.com/dasbootstrapping) por publicar este dataset.
+Los datos los he descargado de este [proyecto de Kaggle](https://www.kaggle.com/dasbootstrapping/game-of-thrones-episode-data#got_csv.csv). Muchas gracias, [dasbootstrapping](https://www.kaggle.com/dasbootstrapping) por publicar este dataset.
 
 Lo único que he hecho ha sido revisar los valores de los promedios que estaban ya en la tabla (algunos promedios han cambiado mínimamente) e incluir las valoraciones de los 4 primeros capítulos de la temporada 8 con sus correspondientes valoraciones. La fecha de obtención de estos datos de imdb.com es el 2019-05-09.
 
@@ -35,25 +36,70 @@ got_ratings <- original_dataset %>% select(Season,
 
 ```
 
+Obtenemos un resumen con varios estadísticos con la función "summary". El 75% de los episodios tienen una valoración promedio por encima del 8,8. Casi nada. Y un 25% obtuvieron una valoración mayor que 9,4. 
+
+```{r , warning= FALSE, message= FALSE}
+
+summary(got_ratings$`Imdb Rating`)
+
+```
+
 Echamos un vistazo a la distribución de las valoraciones con un histograma.
 
 ```{r , warning= FALSE, message= FALSE, out.width= '\\textwidth'}
 
 ggplot(got_ratings, aes(x = `Imdb Rating`)) +
-                    geom_histogram()
-
+                    geom_histogram(binwidth = 0.25) + 
+                          stat_bin(binwidth= 0.25, geom="text", aes(label=..count..), vjust = -0.5)
 ```
-El "hueco" entre la valoración más baja que existía hasta ahora y la del episodio 8x04 es tremendo, 1,3 puntos. 
+El "hueco" entre la valoración más baja que existía hasta ahora y la del episodio 8x04 "The Last of the Starks" es tremendo, 1,4 puntos.
 
 Lo vemos también con todas las valoraciones representadas en un nube de puntos.
 
 ```{r , warning= FALSE, message= FALSE, out.width= '\\textwidth'}
 
-ggplot(got_ratings, aes(x = `Episode Number`, y = `Imdb Rating`)) +
-                    geom_point()
-
+ggplot(got_ratings, aes(x = `Episode Number`, y = `Imdb Rating`, color = as.factor(Season))) +
+                    geom_point() +
+                    labs(colour = "Temporadas",
+                         x = "Número de episodio", 
+                         y = "Valoración IMDb", 
+                         title = "Juego de Tronos - Valoraciones IMDb por episodio") +
+                   geom_text(aes(label=ifelse(`Imdb Rating` < 7,`Episode Name`,'')),hjust= 0.8,vjust= -2)
 ```
 
- No hay precedente, ni punto cercano, a la la valoración de este episodio. Lo que está por determinar es si los dos últimos capítulos seguirán en esta línea o recuperarán, por lo menos en parte, el favor del público. 
+ No hay precedente, ni punto cercano, a la la valoración de este episodio. Lo que está por determinar es si los dos últimos capítulos seguirán en esta línea o recuperarán, por lo menos en parte, el favor del público. Pero es que 3 de los 4 capítulos peor valorados de toda la serie pertenecen a esta temporada. No pinta bien la cosa.
  
-Un detalle de la evolución de las valoraciones que se observa a simple vista en este último gráfico es la creciente variabilidad en las valoraciones. Sigue habiendo capítulos muy bien valorados (no en la presente temporada), incluso mejor valorados que cualquier episodio de las primeras temporadas, pero también aparecen cada vez más capítulos en el entorno del 8,5, a partir del cual ya podríamos decir que es un episodio "flojito" de esta serie. 
+Otro detalle de la evolución de las valoraciones que se observa también a simple vista en este último gráfico es la creciente variabilidad en las valoraciones. En las últimas temporadas, excepto en ésta, sigue habiendo capítulos muy bien valorados , incluso mejor valorados que cualquier episodio de las primeras temporadas, pero también aparecen cada vez más capítulos en el entorno del 8,5, a partir del cual ya podríamos decir que es un episodio "flojito" de esta serie. 
+
+Lo vemos más claro si dividimos los datos y hacemos 2 histogramas, uno para las primeras 4 temporadas y otro para las restantes.
+
+```{r , warning= FALSE, message= FALSE, out.width= '\\textwidth'}
+
+got_ratings_1_4 <- got_ratings %>% 
+                   filter(Season < 5)
+
+got_ratings_5_8 <- got_ratings %>% 
+                   filter(Season > 4)
+
+
+
+graph_1 <- ggplot(got_ratings_1_4, aes(x = `Imdb Rating`)) +
+                    geom_histogram(binwidth = 0.25) + 
+                                     stat_bin(binwidth= 0.25, geom="text", aes(label=..count..), vjust = -0.5) +
+                                      coord_cartesian(xlim = c(6.5, 10.0), ylim = c(0, 20)) +
+                                      labs(title = "Distribución promedios temporadas 1-4")
+
+
+graph_2 <- ggplot(got_ratings_5_8, aes(x = `Imdb Rating`)) +
+                    geom_histogram(binwidth = 0.25,
+                                   xlim = c(6.5, 10.0)) + 
+                                     stat_bin(binwidth= 0.25, geom="text", aes(label=..count..), vjust = -0.5) +
+                                      coord_cartesian(xlim = c(6.5, 10.0), ylim = c(0, 10)) +
+                                      labs(title = "Distribución promedios temporadas 5-8")
+
+grid.arrange(graph_1, 
+             graph_2, 
+             ncol = 1) 
+```
+
+En el segundo histograma es bastante clara la mayor dispersión de los promedios, así como el descenso de las notas más frecuentes, que en el primero se encuentran muy cerca de los nueves mientras en el segundo se produce un claro desplazamiento hacia la izquierda. 
