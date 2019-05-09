@@ -1,0 +1,6 @@
+"0",""
+"0","got_ratings <- original_dataset %>% select(Season, "
+"0","                                           ""Episode Number"","
+"0","                                           ""Episode Name"","
+"0","                                           ""Imdb Rating"")"
+"0",""
