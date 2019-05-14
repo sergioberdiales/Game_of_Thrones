@@ -1,5 +1,9 @@
 # Valoraciones imdb.com
 
+## 8x04. "The Last of Starks".
+
+Nota importante: El siguiente análisis está hecho con los datos actualizados el 09-05-2019. En el apartado siguiente 8x05. "The Bells" además de incluir la nota del quinto capítulo de la temporada se actualiza el promedio del 8x04, que del 6,6 que tenía hace unos días baja hasta un promedio de 6,2. 
+
 En esta parte vamos a echar un vistazo a las valoraciones de los capítulos de Juego de Tronos de los usuarios de imdb.com, centrándonos principalmente en el último capítulo emitido 8x04 "The last of the Starks", que ha batido con muchísimo las peores valoraciones hasta ahora recibidas por un episodio de Juego de Tronos. 
 
 Las valoraciones de los tres primeros capítulos de la temporada 8 (8,3, 8,6 y 8,3)  ya estaban por debajo del promedio histórico de la serie,  pero es que la valoración del cuarto episodio ahora mismo es de 6,6 (con más de 60.000 valoraciones), un auténtico batacazo para esta serie y para HBO. La peor nota hasta ahora la poseía el episodio 5x06 "Unbowed, Unbent, Unbroken", con un 8,1 de promedio. Nada menos que 1,5 puntos de diferencia.
@@ -109,3 +113,47 @@ Querría ser más optimista. Me encanta esta serie y , aunque me gustaba más el
 Todo el código y los datos empleados se encuentran en este repositorio de Github https://github.com/sergioberdiales/game_of_thrones.
 
 Cualquier consulta, queja o sugerencia me la puedes enviar vía twitter [twitter.com/SergioBerdiales](https://twitter.com/SergioBerdiales)
+
+## 8x05. "The Bells". 
+
+Actualizamos los gráficos con las puntuaciones del capítulo 8x05 y la actualización del promedio del 8x04, que ha caíd nada más  y nada menos que 4 décimas en los últimos días. 
+
+Quedan pendiente los comentarios. Esta actualización es simplemente para actualizar los gráficos.
+
+Importamos la tabla: 
+
+```{r , warning= FALSE, message= FALSE}
+
+original_dataset_to_8x05 <- read_csv('data/got_csv_ratings_updated_2019-05-15.csv', locale = locale(encoding = "ISO-8859-1"))
+
+got_ratings_to_8x05 <- original_dataset_to_8x05 %>% select(Season, 
+                                           "Episode Number",
+                                           "Episode Name",
+                                           "Imdb Rating")
+
+histogram_to_8x05 <- ggplot(got_ratings_to_8x05, aes(x = `Imdb Rating`)) +
+                    geom_histogram(binwidth = 0.25) + 
+                          stat_bin(binwidth= 0.25, geom="text", aes(label=..count..), vjust = -0.5)
+
+geom_point_to_8x05 <- ggplot(got_ratings_to_8x05, aes(x = `Episode Number`, y = `Imdb Rating`, color = as.factor(Season))) +
+                    geom_point() +
+                    labs(colour = "Temporadas",
+                         x = "Número de episodio", 
+                         y = "Promedio valoración IMDb", 
+                         title = "Juego de Tronos - Promedio valoraciones IMDb por episodio") +
+                   geom_text(aes(label=ifelse(`Imdb Rating` < 7,`Episode Name`,'')),hjust= 0.8,vjust= -2, show_guide = F)
+
+```
+
+
+Vemos el nuevo histograma:
+```{r , warning= FALSE, message= FALSE}
+histogram_to_8x05
+```
+
+Y el nuevo gráfico de puntos. Ahora mismo "The Bells" mejora un poco las valoraciones del episodio anterior (0,7 puntos más), pero sigue estando muy por debajo de lo que ha venido siendo las valoraciones de la serie. Mejora la puntuación porque, en mi opinión, es un capítulo espectacular, muy bien ejecutado en cuanto a los aspectos técnicos (la fotografía es impresionante) y con un ritmo fantástico. Pero en el fondo los aspectos de los que más se quejaban los fans en sus comentarios del capítulo anterior siguen ahí: 
+```{r , warning= FALSE, message= FALSE}
+geom_point_to_8x05
+```
+
+

@@ -126,7 +126,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <ul class="summary">
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Introducción</a></li>
-<li class="chapter" data-level="1" data-path="valoraciones-imdb-com.html"><a href="valoraciones-imdb-com.html"><i class="fa fa-check"></i><b>1</b> Valoraciones imdb.com</a></li>
+<li class="chapter" data-level="1" data-path="valoraciones-imdb-com.html"><a href="valoraciones-imdb-com.html"><i class="fa fa-check"></i><b>1</b> Valoraciones imdb.com</a><ul>
+<li class="chapter" data-level="1.1" data-path="valoraciones-imdb-com.html"><a href="valoraciones-imdb-com.html#x04.-the-last-of-starks."><i class="fa fa-check"></i><b>1.1</b> 8x04. “The Last of Starks”.</a></li>
+<li class="chapter" data-level="1.2" data-path="valoraciones-imdb-com.html"><a href="valoraciones-imdb-com.html#x05.-the-bells."><i class="fa fa-check"></i><b>1.2</b> 8x05. “The Bells”.</a></li>
+</ul></li>
 </ul>
 
       </nav>
@@ -146,6 +149,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-">
 <div id="valoraciones-imdb.com" class="section level1">
 <h1><span class="header-section-number">1</span> Valoraciones imdb.com</h1>
+<div id="x04.-the-last-of-starks." class="section level2">
+<h2><span class="header-section-number">1.1</span> 8x04. “The Last of Starks”.</h2>
+<p>Nota importante: El siguiente análisis está hecho con los datos actualizados el 09-05-2019. En el apartado siguiente 8x05. “The Bells” además de incluir la nota del quinto capítulo de la temporada se actualiza el promedio del 8x04, que del 6,6 que tenía hace unos días baja hasta un promedio de 6,2.</p>
 <p>En esta parte vamos a echar un vistazo a las valoraciones de los capítulos de Juego de Tronos de los usuarios de imdb.com, centrándonos principalmente en el último capítulo emitido 8x04 “The last of the Starks”, que ha batido con muchísimo las peores valoraciones hasta ahora recibidas por un episodio de Juego de Tronos.</p>
 <p>Las valoraciones de los tres primeros capítulos de la temporada 8 (8,3, 8,6 y 8,3) ya estaban por debajo del promedio histórico de la serie, pero es que la valoración del cuarto episodio ahora mismo es de 6,6 (con más de 60.000 valoraciones), un auténtico batacazo para esta serie y para HBO. La peor nota hasta ahora la poseía el episodio 5x06 “Unbowed, Unbent, Unbroken”, con un 8,1 de promedio. Nada menos que 1,5 puntos de diferencia.</p>
 <p>Así que lo que vamos a hacer es simplemente visualizar en distintos gráficos lo lejos que está la puntuación de este capítulo del resto de episodios de Juego de Tronos.</p>
@@ -213,7 +219,38 @@ graph_<span class="dv">2</span> &lt;-<span class="st"> </span><span class="kw">g
 <p>Querría ser más optimista. Me encanta esta serie y , aunque me gustaba más el espíritu inicial con la que nació y creció, sigo disfrutando muchísimo con ella, pero creo que esta temporada final ya es difícil de levantar.</p>
 <p>Todo el código y los datos empleados se encuentran en este repositorio de Github <a href="https://github.com/sergioberdiales/game_of_thrones" class="uri">https://github.com/sergioberdiales/game_of_thrones</a>.</p>
 <p>Cualquier consulta, queja o sugerencia me la puedes enviar vía twitter <a href="https://twitter.com/SergioBerdiales">twitter.com/SergioBerdiales</a></p>
+</div>
+<div id="x05.-the-bells." class="section level2">
+<h2><span class="header-section-number">1.2</span> 8x05. “The Bells”.</h2>
+<p>Actualizamos los gráficos con las puntuaciones del capítulo 8x05 y la actualización del promedio del 8x04, que ha caíd nada más y nada menos que 4 décimas en los últimos días.</p>
+<p>Quedan pendiente los comentarios. Esta actualización es simplemente para actualizar los gráficos.</p>
+<p>Importamos la tabla:</p>
+<pre class="sourceCode r"><code class="sourceCode r">original_dataset_to_8x05 &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span class="st">&#39;data/got_csv_ratings_updated_2019-05-15.csv&#39;</span>, <span class="dt">locale =</span> <span class="kw">locale</span>(<span class="dt">encoding =</span> <span class="st">&quot;ISO-8859-1&quot;</span>))
 
+got_ratings_to_8x05 &lt;-<span class="st"> </span>original_dataset_to_8x05 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(Season, 
+                                           <span class="st">&quot;Episode Number&quot;</span>,
+                                           <span class="st">&quot;Episode Name&quot;</span>,
+                                           <span class="st">&quot;Imdb Rating&quot;</span>)
+
+histogram_to_8x05 &lt;-<span class="st"> </span><span class="kw">ggplot</span>(got_ratings_to_8x05, <span class="kw">aes</span>(<span class="dt">x =</span> <span class="st">`</span><span class="dt">Imdb Rating</span><span class="st">`</span>)) <span class="op">+</span>
+<span class="st">                    </span><span class="kw">geom_histogram</span>(<span class="dt">binwidth =</span> <span class="fl">0.25</span>) <span class="op">+</span><span class="st"> </span>
+<span class="st">                          </span><span class="kw">stat_bin</span>(<span class="dt">binwidth=</span> <span class="fl">0.25</span>, <span class="dt">geom=</span><span class="st">&quot;text&quot;</span>, <span class="kw">aes</span>(<span class="dt">label=</span>..count..), <span class="dt">vjust =</span> <span class="fl">-0.5</span>)
+
+geom_point_to_8x05 &lt;-<span class="st"> </span><span class="kw">ggplot</span>(got_ratings_to_8x05, <span class="kw">aes</span>(<span class="dt">x =</span> <span class="st">`</span><span class="dt">Episode Number</span><span class="st">`</span>, <span class="dt">y =</span> <span class="st">`</span><span class="dt">Imdb Rating</span><span class="st">`</span>, <span class="dt">color =</span> <span class="kw">as.factor</span>(Season))) <span class="op">+</span>
+<span class="st">                    </span><span class="kw">geom_point</span>() <span class="op">+</span>
+<span class="st">                    </span><span class="kw">labs</span>(<span class="dt">colour =</span> <span class="st">&quot;Temporadas&quot;</span>,
+                         <span class="dt">x =</span> <span class="st">&quot;Número de episodio&quot;</span>, 
+                         <span class="dt">y =</span> <span class="st">&quot;Promedio valoración IMDb&quot;</span>, 
+                         <span class="dt">title =</span> <span class="st">&quot;Juego de Tronos - Promedio valoraciones IMDb por episodio&quot;</span>) <span class="op">+</span>
+<span class="st">                   </span><span class="kw">geom_text</span>(<span class="kw">aes</span>(<span class="dt">label=</span><span class="kw">ifelse</span>(<span class="st">`</span><span class="dt">Imdb Rating</span><span class="st">`</span> <span class="op">&lt;</span><span class="st"> </span><span class="dv">7</span>,<span class="st">`</span><span class="dt">Episode Name</span><span class="st">`</span>,<span class="st">&#39;&#39;</span>)),<span class="dt">hjust=</span> <span class="fl">0.8</span>,<span class="dt">vjust=</span> <span class="dv">-2</span>, <span class="dt">show_guide =</span> F)</code></pre>
+<p>Vemos el nuevo histograma:</p>
+<pre class="sourceCode r"><code class="sourceCode r">histogram_to_8x05</code></pre>
+<p><img src="_main_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p>Y el nuevo gráfico de puntos. Ahora mismo “The Bells” mejora un poco las valoraciones del episodio anterior (0,7 puntos más), pero sigue estando muy por debajo de lo que ha venido siendo las valoraciones de la serie. Mejora la puntuación porque, en mi opinión, es un capítulo espectacular, muy bien ejecutado en cuanto a los aspectos técnicos (la fotografía es impresionante) y con un ritmo fantástico. Pero en el fondo los aspectos de los que más se quejaban los fans en sus comentarios del capítulo anterior siguen ahí:</p>
+<pre class="sourceCode r"><code class="sourceCode r">geom_point_to_8x05</code></pre>
+<p><img src="_main_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+
+</div>
 </div>
             </section>
 
