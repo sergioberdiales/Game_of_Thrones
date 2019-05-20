@@ -158,7 +158,7 @@ geom_point_to_8x05
 
 ## 8x06. "The Iron Throne". 
 
-Una actualización rápida (¡Todavía no he visto el capítulo!) simplemente para incluir el promedio de valoraciones del último capítulo (y actualizar el resto, que siguen cayendo), que es realmente pésimo, un 5,1. Viendo como han evolucionado los promedios de los capítulos anteriores, yo diría que este en unos días estará más cerca del 4,5 que del 5,0.  
+Una actualización rápida (¡Todavía no he visto el capítulo!) simplemente para incluir el promedio de valoraciones del último capítulo (y actualizar el resto, que siguen cayendo), que es realmente pésimo, un 5,2. Viendo como han evolucionado los promedios de los capítulos anteriores, yo diría que este en unos días estará más cerca del 4,5 que del 5,0.  
 
 Importamos la tabla actualizada: 
 
