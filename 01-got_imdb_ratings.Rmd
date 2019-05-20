@@ -156,4 +156,46 @@ Y el nuevo gráfico de puntos. Ahora mismo "The Bells" mejora un poco las valora
 geom_point_to_8x05
 ```
 
+## 8x06. "The Iron Throne". 
 
+Una actualización rápida (¡Todavía no he visto el capítulo!) simplemente para incluir el promedio de valoraciones del último capítulo (y actualizar el resto, que siguen cayendo), que es realmente pésimo, un 5,1. Viendo como han evolucionado los promedios de los capítulos anteriores, yo diría que este en unos días estará más cerca del 4,5 que del 5,0.  
+
+Importamos la tabla actualizada: 
+
+```{r , warning= FALSE, message= FALSE}
+
+original_dataset_to_8x06 <- read_csv('data/got_csv_ratings_updated_2019-05-20.csv', locale = locale(encoding = "ISO-8859-1"))
+
+got_ratings_to_8x06 <- original_dataset_to_8x06 %>% select(Season, 
+                                           "Episode Number",
+                                           "Episode Name",
+                                           "Imdb Rating")
+
+histogram_to_8x06 <- ggplot(got_ratings_to_8x06, aes(x = `Imdb Rating`)) +
+                    geom_histogram(binwidth = 0.25) + 
+                          stat_bin(binwidth= 0.25, geom="text", aes(label=..count..), vjust = -0.5)
+
+geom_point_to_8x06 <- ggplot(got_ratings_to_8x06, aes(x = `Episode Number`, y = `Imdb Rating`, color = as.factor(Season))) +
+                    geom_point() +
+                    labs(colour = "Temporadas",
+                         x = "Número de episodio", 
+                         y = "Promedio valoración IMDb", 
+                         title = "Juego de Tronos - Promedio valoraciones IMDb por episodio") +
+                   geom_text(aes(label=ifelse(`Imdb Rating` < 7,`Episode Name`,'')),hjust= 0.8,vjust= -2, show_guide = F)
+
+```
+
+```{r , warning= FALSE, message= FALSE}
+geom_point_to_8x06
+```
+
+Tomando la idea de este artículo de "The Economist" https://twitter.com/TheEconomist/status/1129538857094008832 voy a añadir al gráfico una línea de tendencia por temporada, que creo que puede aportar bastante.
+
+Elimino el fondo y las líneas para dejar el gráfico más limpio.
+
+```{r , warning= FALSE, message= FALSE}
+geom_point_to_8x06 + geom_smooth(alpha = 0.0) +
+                    theme(panel.grid.major = element_blank(),
+                  panel.grid.minor = element_blank(),
+                  panel.background = element_blank())
+```
