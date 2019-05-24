@@ -164,7 +164,7 @@ Importamos la tabla actualizada:
 
 ```{r , warning= FALSE, message= FALSE}
 
-original_dataset_to_8x06 <- read_csv('data/got_csv_ratings_updated_2019-05-20.csv', locale = locale(encoding = "ISO-8859-1"))
+original_dataset_to_8x06 <- read_csv('data/got_csv_ratings_updated_2019-05-20_09_30.csv', locale = locale(encoding = "ISO-8859-1"))
 
 got_ratings_to_8x06 <- original_dataset_to_8x06 %>% select(Season, 
                                            "Episode Number",
@@ -194,6 +194,37 @@ Tomando la idea de este artículo de "The Economist" https://twitter.com/TheEcon
 Elimino el fondo y las líneas para dejar el gráfico más limpio.
 
 ```{r , warning= FALSE, message= FALSE}
+geom_point_to_8x06 + geom_smooth(alpha = 0.0) +
+                    theme(panel.grid.major = element_blank(),
+                  panel.grid.minor = element_blank(),
+                  panel.background = element_blank())
+```
+¡Y 8 horas más tarde (21:25) la nota del último capítulo ha caído ya 0,6 puntos! Actualizo también las valoraciones del resto de capítulos de la temporada, porque siguen cayendo también sus promedios (los datos de las anteriores temporadas no los toco). 
+
+Actualizamos el gráfico con los nuevos datos.
+
+```{r , warning= FALSE, message= FALSE}
+
+original_dataset_to_8x06 <- read_csv('data/got_csv_ratings_updated_2019-05-20_21_25.csv', locale = locale(encoding = "ISO-8859-1"))
+
+got_ratings_to_8x06 <- original_dataset_to_8x06 %>% select(Season, 
+                                           "Episode Number",
+                                           "Episode Name",
+                                           "Imdb Rating")
+
+histogram_to_8x06 <- ggplot(got_ratings_to_8x06, aes(x = `Imdb Rating`)) +
+                    geom_histogram(binwidth = 0.25) + 
+                          stat_bin(binwidth= 0.25, geom="text", aes(label=..count..), vjust = -0.5)
+
+geom_point_to_8x06 <- ggplot(got_ratings_to_8x06, aes(x = `Episode Number`, y = `Imdb Rating`, color = as.factor(Season))) +
+                    geom_point() +
+                    labs(colour = "Temporadas",
+                         x = "Número de episodio", 
+                         y = "Promedio valoración IMDb", 
+                         title = "Juego de Tronos - Promedio valoraciones IMDb por episodio") +
+                   geom_text(aes(label=ifelse(`Imdb Rating` < 7,`Episode Name`,'')),hjust= 1.05, show_guide = F)
+
+
 geom_point_to_8x06 + geom_smooth(alpha = 0.0) +
                     theme(panel.grid.major = element_blank(),
                   panel.grid.minor = element_blank(),
